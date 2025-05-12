@@ -28,9 +28,7 @@ spec:
       {{- if (or (and .Values.custom .Values.custom.volumes) .Values.customerAssetVolumeClaimName)}}
       volumes:
         {{- if (and .Values.custom .Values.custom.volumes) }}
-        - name: {{ .Values.custom.volumes.name }}
-          persistentVolumeClaim:
-            claimName: {{ .Values.custom.volumes.name }}
+        {{ toYaml .Values.custom.volumes | nindent 8}}
         {{- end }}
         {{- if .Values.customerAssetVolumeClaimName }}
         - name: {{ $depName }}-appstatic-assets
@@ -64,12 +62,11 @@ spec:
         {{- if (or (and .Values.custom .Values.custom.volumes) .Values.customerAssetVolumeClaimName)}}
         volumeMounts:
           {{ if (and .Values.custom .Values.custom.volumeMounts) }}
-        - name: {{ .Values.custom.volumeMounts.name }}
-          mountPath: {{ .Values.custom.volumeMounts.mountPath }}
+          {{ toYaml .Values.custom.volumeMounts | nindent 10 }}
           {{- end }}
           {{- if .Values.customerAssetVolumeClaimName }}
-        - name: {{ $depName }}-appstatic-assets
-          mountPath: /usr/src/app/dist/customers
+          - name: {{ $depName }}-appstatic-assets
+            mountPath: /usr/src/app/dist/customers
           {{- end }}
         {{- end }}
         args:
