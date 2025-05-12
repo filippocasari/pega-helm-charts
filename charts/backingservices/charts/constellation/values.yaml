@@ -75,9 +75,9 @@ readinessProbe:
   successThreshold: 1
   failureThreshold: 3
 
-custom: # Custom configuration for constellation
-#  volumes:
-#    name: CUSTOM_VOLUMES
-#  volumeMounts:
-#    name: CUSTOM_VOLUMES_MOUNT
-#    mountPath: CUSTOM_MOUNT_PATH
+# custom: # Custom configuration volumes and mounts
+  # volumes:
+  #   - name: CUSTOM_VOLUMES
+  # volumeMounts:
+  #   - name: CUSTOM_VOLUMES_MOUNT
+  #     mountPath: CUSTOM_MOUNT_PATH
