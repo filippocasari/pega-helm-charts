@@ -75,9 +75,11 @@ readinessProbe:
   successThreshold: 1
   failureThreshold: 3
 
-# custom: # Custom configuration volumes and mounts
+# custom: # Custom configuration volumes and mounts /mnt/custom-path
   # volumes:
   #   - name: CUSTOM_VOLUMES
+  #     hostPath:
+  #        path: /mnt/custom-path
   # volumeMounts:
   #   - name: CUSTOM_VOLUMES_MOUNT
   #     mountPath: CUSTOM_MOUNT_PATH
