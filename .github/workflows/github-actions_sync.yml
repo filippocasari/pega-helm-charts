@@ -1,0 +1,49 @@
+name: Sync Fork and Update Branches
+
+on:
+  schedule:
+    - cron: '0 19 * * *' # Runs daily at midnight
+  workflow_dispatch: # Manual trigger
+  push:
+    branches:
+      - master # Trigger on pushes to the master branch
+
+jobs:
+  sync-fork:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout your repository
+      - name: Checkout Fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for all branches
+
+      # Step 2: Add the upstream repository
+      - name: Add Upstream
+        run: |
+          git config --global user.name "Filippo Casari"
+          git config --global user.email fili9941@gmail.com
+
+          git remote add upstream https://github.com/pegasystems/pega-helm-charts.git
+
+      # Step 3: Sync master with upstream/master
+      - name: Sync Master
+        run: |
+          git fetch origin
+          git checkout master
+          git fetch upstream
+          git merge upstream/master
+          git push origin master
+
+      # Step 4: Update Feature Branches
+      - name: Update Feature Branches
+        run: |
+          git fetch origin
+          for branch in $(git branch -r | grep 'origin/' | grep -v 'origin/master' | sed 's/origin\///' | sed 's/->//g')
+          do
+            git checkout $branch
+            git merge master
+            git push origin $branch
+            echo "Merged branch: $branch"
+          done
