@@ -1,12 +1,8 @@
 module github.com/pegasystems/pega-helm-charts/terratest/src/test
 
-<<<<<<< HEAD
-go 1.21
-toolchain go1.24.1
-=======
 go 1.23.0
+
 toolchain go1.23.7
->>>>>>> b6dc768 (volume config customizable)
 
 require (
 	github.com/GoogleCloudPlatform/gke-managed-certs v0.3.4
