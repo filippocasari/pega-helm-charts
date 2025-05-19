@@ -157,3 +157,86 @@ func TestConstellationStaticDeploymentCustomVolumes(t *testing.T) {
 		require.True(t, foundCustom, "Expected volume with claimName 'custom-volume' not found")
 	})
 }
+func TestConstellationStaticDeploymentWithAnnotations(t *testing.T) {
+	t.Run("No annotations", func(t *testing.T) {
+		helmChartParser := NewHelmConfigParser(
+			NewHelmTestFromTemplate(t, helmChartRelativePath, map[string]string{
+				"constellation.enabled": "true",
+				"constellation.name":    "constellation",
+			},
+				[]string{"charts/constellation/templates/clln-deployment.yaml"}),
+		)
+	
+		var deployment appsv1.Deployment
+		helmChartParser.getResourceYAML(SearchResourceOption{
+			Name: "constellation",
+			Kind: "Deployment",
+		}, &deployment)
+
+		annotations := deployment.ObjectMeta.Annotations
+		podAnnotations := deployment.Spec.Template.ObjectMeta.Annotations
+		require.Empty(t, annotations, "Expected no annotations, but found some")
+		require.Empty(t, podAnnotations, "Expected no pod annotations, but found some")
+
+	})
+
+	t.Run("With annotations", func(t *testing.T) {
+		helmChartParser := NewHelmConfigParser(
+			NewHelmTestFromTemplate(t, helmChartRelativePath, map[string]string{
+				"constellation.enabled": "true",
+				"constellation.name":    "constellation",
+				"constellation.annotations.key1":   "value1",
+			},
+				[]string{"charts/constellation/templates/clln-deployment.yaml"}),
+		)
+	
+		var cllnMessagingDeploymentObj appsv1.Deployment
+		helmChartParser.getResourceYAML(SearchResourceOption{
+			Name: "constellation",
+			Kind: "Deployment",
+		}, &cllnMessagingDeploymentObj)
+	
+		require.Equal(t, "value1", cllnMessagingDeploymentObj.ObjectMeta.Annotations["key1"])
+	})
+	t.Run("With multiple annotations", func(t *testing.T) {
+		helmChartParser := NewHelmConfigParser(
+			NewHelmTestFromTemplate(t, helmChartRelativePath, map[string]string{
+				"constellation.enabled": "true",
+				"constellation.name":    "constellation",
+				"constellation.annotations.key0":   "value0",
+				"constellation.annotations.key1":   "value1",
+			},
+				[]string{"charts/constellation/templates/clln-deployment.yaml"}),
+		)
+	
+		var cllnMessagingDeploymentObj appsv1.Deployment
+		helmChartParser.getResourceYAML(SearchResourceOption{
+			Name: "constellation",
+			Kind: "Deployment",
+		}, &cllnMessagingDeploymentObj)
+	
+		require.Equal(t, "value0", cllnMessagingDeploymentObj.ObjectMeta.Annotations["key0"])
+		require.Equal(t, "value1", cllnMessagingDeploymentObj.ObjectMeta.Annotations["key1"])
+	})
+	t.Run("With podAnnotations", func(t *testing.T) {
+		helmChartParser := NewHelmConfigParser(
+			NewHelmTestFromTemplate(t, helmChartRelativePath, map[string]string{
+				"constellation.enabled": "true",
+				"constellation.name":    "constellation",
+				"constellation.podAnnotations.key1":   "value1",
+
+			},
+				[]string{"charts/constellation/templates/clln-deployment.yaml"}),
+		)
+	
+		var cllnMessagingDeploymentObj appsv1.Deployment
+		helmChartParser.getResourceYAML(SearchResourceOption{
+			Name: "constellation",
+			Kind: "Deployment",
+		}, &cllnMessagingDeploymentObj)
+	
+		require.Equal(t, "value1", cllnMessagingDeploymentObj.Spec.Template.ObjectMeta.Annotations["key1"])
+	})
+
+	
+}
