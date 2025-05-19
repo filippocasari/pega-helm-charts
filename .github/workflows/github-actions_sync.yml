@@ -22,7 +22,7 @@ jobs:
       # Step 2: Add the upstream repository
       - name: Add Upstream
         run: |
-          git config --global user.name "Filippo Casari"
+          git config --global user.name "filippocasari"
           git config --global user.email fili9941@gmail.com
 
           git remote add upstream https://github.com/pegasystems/pega-helm-charts.git
