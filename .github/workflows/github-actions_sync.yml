@@ -2,7 +2,7 @@ name: Sync Fork and Update Branches
 
 on:
   schedule:
-    - cron: '0 19 * * *' # Runs daily at midnight
+    - cron: '0 19 * * *' # Runs daily at 19:00 UTC
   workflow_dispatch: # Manual trigger
   push:
     branches:
@@ -25,7 +25,7 @@ jobs:
           git config --global user.name "filippocasari"
           git config --global user.email fili9941@gmail.com
 
-          git remote add upstream https://github.com/pegasystems/pega-helm-charts.git
+          git remote get-url upstream || git remote add upstream https://github.com/pegasystems/pega-helm-charts.git
 
       # Step 3: Sync master with upstream/master
       - name: Sync Master
@@ -42,7 +42,7 @@ jobs:
           git fetch origin
           for branch in $(git branch -r | grep 'origin/' | grep -v 'origin/master' | sed 's/origin\///' | sed 's/->//g')
           do
-            git checkout $branch
+            git switch --force-create $branch --track origin/$branch || git checkout $branch
             git merge master
             git push origin $branch
             echo "Merged branch: $branch"
